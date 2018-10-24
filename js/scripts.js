@@ -1,76 +1,65 @@
-const vowels = ["a", "e", "i", "o", "u"];
-const legalValues = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+const vowel = ["a", "e", "i", "o", "u"];
+const letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
-var isLegal = function(word) {
-  for(var i = 0; i < word.length; i++) {
-    var letterLegal = false;
-    for(var j = 0; j < legalValues.length; j++) {
-      if(word.slice(i, i+1) === legalValues[j]) {
-        letterLegal = true;
-        break;
+function pigLatin(word){
+  for (var index = 0; index < vowel.length; index ++){
+    if (word.slice(0,1) === vowel[index]){
+      return word + "way";
+
+    }
+
+  }
+  for(var index = 0; index < word.length; index ++){
+    for(var index2 = 0; index2 < vowel.length; index2 ++){
+      if(word.slice(index, index + 1) === vowel[index2]){
+        if(word.slice(index -1,index + 1) === "qu"){
+          return word.slice(index + 1) + word.slice(0,index +1) + "ay";
+        }
+        return word.slice(index) + word.slice(0, index) + "ay";
       }
     }
-    if(!letterLegal) {
-      return false;
-    }
   }
-  return true;
-};
+  return word.slice(1) + word.slice(0,1) + "ay";
+}
 
-var isVowel = function(letter, pointInWord, word) {
-  if(letter === "u" && pointInWord > 0 && word.slice(pointInWord - 1, pointInWord) === "q") {
-    return false;
+function isIllegal(word) {
+  if(word === "") {
+    return true;
   }
-  for(var i = 0; i < vowels.length; i++) {
-    if(vowels[i] === letter) {
-      return true;
-    } else if(pointInWord > 0 && letter === "y") {
+  for(var index = 0; index < word.length; index ++){
+    var bad = true;
+    for( var index2 = 0; index2 < letters.length; index2 ++){
+      if(word.slice(index,index + 1) === letters[index2]){
+        bad =  false;
+      }
+
+    }
+    if(bad){
       return true;
     }
   }
   return false;
-};
+}
 
-var findFirstVowel = function(word) {
-  for(var i = 0; i < word.length; i++) {
-    if(isVowel(word.slice(i, i+1), i, word)) {
-      return i;
-    }
-  }
-};
 
-var pigLatin = function(word) {
-  var firstVowel = findFirstVowel(word);
-  var frontPortion = word.slice(0, firstVowel);
-  var newWord;
-  if(firstVowel === 0) {
-    newWord = word.concat("way");
-  } else {
-    newWord = word.slice(firstVowel) + frontPortion + "ay";
-  }
-  return newWord;
-};
 
-var isNotWord = function(word) {
-  return false;
-};
+
 
 $(document).ready(function() {
   $("#pig").submit(function(event) {
     event.preventDefault();
-    var word = $("#latin").val().toLowerCase();
-    if(!isLegal(word)) {
+    var word = $("#userinput").val().toLowerCase();
+    debugger;
+    if(isIllegal(word)){
       $("#not-word").show();
       $("#results").hide();
-    } else {
-      if(isNotWord(word)) {
-        $("#not-word").show();
-        return;
-      }
-      var newWord = pigLatin(word);
-      $("#output").text(newWord);
-      $("#results").show();
-      $("#not-word").hide();
+      return;
     }
+    var pigWord = pigLatin(word);
+
+
+    $("#output").text(pigWord);
+$("#not-word").hide();
+$("#results").show();
   });
 });
